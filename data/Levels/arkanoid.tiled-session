@@ -1,0 +1,58 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "F:/PROYECTOS/THE CORE/C++/Arkanoid/data/images/tilemap/platform.tsx": {
+            "scaleInDock": 1
+        },
+        "Level1.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 507.25,
+                "y": 62.75
+            }
+        },
+        "demo.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 484.33333333333326,
+                "y": 139.66666666666663
+            }
+        },
+        "demo.tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "platform.tmx": {
+            "scale": 0.125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4428,
+                "y": 3028
+            }
+        },
+        "platform.tmx#tileset02": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "F:/PROYECTOS/THE CORE/C++/Arkanoid/data/Levels/images/PNG/ArkanoidAssets/Bricks/Colored",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "openFiles": [
+    ],
+    "project": "arkanoid.tiled-project",
+    "recentFiles": [
+        "demo.tmx",
+        "platform.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
