@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include "LevelManager.h"
 #include "SoundManager.h"
 #include "Gameplay/Ball.h"
 #include "Gameplay/Paddle.h"
@@ -39,11 +40,11 @@ public:
     void createExtraBalls();
     void setGameStateGameOver(sf::RenderWindow& window);
     void setGameStateVictory(sf::RenderWindow& window);
-
-    // To-Do: Implement a unload()
-
     void update(uint32_t deltaMilliseconds);
     void render(sf::RenderWindow& window);
+    bool unload();
+    void reset();
+    void setWindow(sf::RenderWindow* render_window);
 
 private:
     // This is just an example. Think a good way to group the actors of your game. If they need any type of manager, etc...
@@ -60,5 +61,9 @@ private:
     ObjectLayer* m_unbreakableLayer{nullptr};
 
     SoundManager m_soundManager;
-    
+    LevelManager m_levelManager;
+    sf::Texture m_replayButtonTexture;
+    sf::Sprite m_replayButtonSprite;
+    bool m_shouldReset = false;
+    sf::RenderWindow* m_window{nullptr};
 };

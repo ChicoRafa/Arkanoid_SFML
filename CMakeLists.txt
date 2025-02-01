@@ -21,10 +21,7 @@ set(PROJECT_HEADERS
     include/Utils/Constants.h
 
     include/Core/AssetManager.h
-    include/Core/CollisionManager.h
-    include/Core/InputManager.h
     include/Core/LevelManager.h
-    include/Core/Renderer.h
     include/Core/SoundManager.h
     include/Core/Game.h
     include/Core/World.h
@@ -43,10 +40,7 @@ set(PROJECT_HEADERS
 set(PROJECT_SOURCES
 
     src/Core/AssetManager.cpp
-    src/Core/CollisionManager.cpp
-    src/Core/InputManager.cpp
     src/Core/LevelManager.cpp
-    src/Core/Renderer.cpp
     src/Core/SoundManager.cpp
     src/Core/Game.cpp
     src/Core/World.cpp

@@ -1,9 +1,16 @@
-#ifndef LEVEL_MANAGER_H
-#define LEVEL_MANAGER_H
+#pragma once
+#include "SoundManager.h"
+#include "SFML/Graphics/Font.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
+
 
 class LevelManager
 {
-    // Métodos vacíos por ahora
-};
+public:
+    LevelManager();
+    void setGameStateGameOver(sf::RenderWindow& window);
+    void setGameStateVictory(sf::RenderWindow& window);
 
-#endif // LEVEL_MANAGER_H
+private:
+    sf::Font m_font;
+};

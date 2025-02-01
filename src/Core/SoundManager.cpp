@@ -31,8 +31,11 @@ void SoundManager::playSound(const std::string& soundToPlay)
 {
     if (m_sounds.find(soundToPlay) != m_sounds.end())
     {
-        m_sounds[soundToPlay].setVolume(m_volume);
-        m_sounds[soundToPlay].play();
+        if (m_sounds[soundToPlay].getStatus() == sf::Sound::Stopped)
+        {
+            m_sounds[soundToPlay].setVolume(m_volume);
+            m_sounds[soundToPlay].play();
+        }
     }
 }
 

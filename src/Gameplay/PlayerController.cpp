@@ -12,8 +12,9 @@ bool PlayerController::init(const PlayerControllerDescriptor& playerControllerDe
     m_tileHeight = playerControllerDescriptor.tileHeight;
     m_collisionBox.setSize(sf::Vector2f(playerControllerDescriptor.tileWidth, playerControllerDescriptor.tileHeight));
     m_collisionBox.setFillColor(sf::Color::Transparent);
-    m_collisionBox.setOutlineColor(sf::Color::Red);
-    m_collisionBox.setOutlineThickness(1.0f);
+    /*Debugging purposes
+     *m_collisionBox.setOutlineColor(sf::Color::Red);
+    m_collisionBox.setOutlineThickness(1.0f);*/
     m_collisionBox.setPosition(playerControllerDescriptor.position);
 
     m_lives = 3;
