@@ -23,7 +23,7 @@ This project is an implementation of the classic Arkanoid game using SFML. The g
    - Follow the instructions on the [SFML website](https://www.sfml-dev.org/download.php) to install SFML for your operating system.
 
 3. Build the project:
-   - Open the project in JetBrains Rider.
+   - Open the project in JetBrains Rider, Visual Studio or your favourite IDE.
    - Configure the project to use the installed SFML library.
    - Build the project using the IDE.
 
