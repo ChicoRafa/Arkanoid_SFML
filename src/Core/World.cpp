@@ -1,4 +1,3 @@
-#include <functional>
 #include <Core/AssetManager.h>
 #include <Core/World.h>
 #include "Gameplay/Ball.h"
@@ -6,6 +5,8 @@
 #include <Render/SFMLOrthogonalLayer.h>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <tmxlite/Map.hpp>
+
+#include "Core/LevelManager.h"
 #include "Utils/Constants.h"
 
 World::~World()
@@ -54,52 +55,69 @@ bool World::load()
     const bool ballInitOk = ball->init(ballDescriptor);
     m_balls.push_back(ball);
 
-    // To-Do, read ALL from file, this is just a quick example to understand that here is where entities are created but consider grouping/managing actors in a smarter way
-
-    // To-Do, Load level: this should have its own class
+	//Map
     m_map = new tmx::Map();
-    m_map->load("../Data/Levels/level1.tmx");
+	bool mapLoadOk = m_map->load("../Data/Levels/level1.tmx");
     m_layerZero = new MapLayer(*m_map, 0);
 	
     m_collisionLayer = new ObjectLayer(*m_map, 1);
 	m_unbreakableLayer = new ObjectLayer(*m_map, 2);
 
 	m_soundManager.loadAllSounds();
-
-	//TO-DO: unify return statement
-    return paddleInitOk && ballInitOk;
+	// Load replay button texture and initialize sprite
+	m_replayButtonTexture.loadFromFile("../Data/Buttons/replay.png");
+	m_replayButtonSprite.setTexture(m_replayButtonTexture);
+	m_replayButtonSprite.setScale(0.5f, 0.5f); 
+	m_replayButtonSprite.setPosition((SCREEN_WIDTH - m_replayButtonTexture.getSize().x * 0.5f) / 2.f, (SCREEN_HEIGHT - m_replayButtonTexture.getSize().y * 0.5f) / 2.f + 75.f);
+	
+	bool allResourcesLoaded = paddleInitOk && ballInitOk && mapLoadOk;
+	return allResourcesLoaded;
 }
 
 void World::update(uint32_t deltaMilliseconds)
 {
-	//update level
-	m_layerZero->update(sf::milliseconds(deltaMilliseconds));
-
-	// Update actors
-	for (auto& powerUp : m_powerUps)
+	if (m_isGameOver || m_isVictory)
 	{
-		powerUp->update(deltaMilliseconds);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_window);
+			if (m_replayButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition)))
+			{
+				reset();
+			}
+		}
 	}
-	for (auto& ball : m_balls)
+	else
 	{
-		ball->update(deltaMilliseconds);
-	}
-	m_paddle->update(deltaMilliseconds);
+		// Update level
+		m_layerZero->update(sf::milliseconds(deltaMilliseconds));
 
-	//handle collisions
-	handleCollisionsWithBricks();
-	handleCollisionsWithUnbeakableBricks();
-	handleCollisionsWithPaddle();
-	handlePowerUpCollisions();
+		// Update actors
+		for (auto& powerUp : m_powerUps)
+		{
+			powerUp->update(deltaMilliseconds);
+		}
+		for (auto& ball : m_balls)
+		{
+			ball->update(deltaMilliseconds);
+		}
+		m_paddle->update(deltaMilliseconds);
 
-	    
-	// Check if the ball falls below the bottom boundary
-	checkBallBoundaries();
+		// Handle collisions
+		handleCollisionsWithBricks();
+		handleCollisionsWithUnbeakableBricks();
+		handleCollisionsWithPaddle();
+		handlePowerUpCollisions();
 
-	//Handling victory condition (all bricks were destroyed)
-	if (m_collisionLayer->getShapes().empty() && !m_isVictory)
-	{
-		m_isVictory = true;
+		// Check if the ball falls below the bottom boundary
+		checkBallBoundaries();
+
+		// Handling victory condition (all bricks were destroyed)
+		if (m_collisionLayer->getShapes().empty() && !m_isVictory)
+		{
+			m_isVictory = true;
+			m_soundManager.playSound("victory");
+		}
 	}
 }
 
@@ -126,13 +144,68 @@ void World::render(sf::RenderWindow& window)
 	if (m_isGameOver)
 	{
 		setGameStateGameOver(window);
+		window.draw(m_replayButtonSprite);
 	}
 	if (m_isVictory)
 	{
 		setGameStateVictory(window);
+		window.draw(m_replayButtonSprite);
 	}
 }
 
+bool World::unload()
+{
+	for (auto powerUp : m_powerUps)
+	{
+		delete powerUp;
+	}
+	m_powerUps.clear();
+
+	for (auto ball : m_balls)
+	{
+		delete ball;
+	}
+	m_balls.clear();
+
+	if (m_paddle)
+	{
+		delete m_paddle;
+		m_paddle = nullptr;
+	}
+
+	if (m_map)
+	{
+		delete m_map;
+		m_map = nullptr;
+	}
+	if (m_layerZero)
+	{
+		delete m_layerZero;
+		m_layerZero = nullptr;
+	}
+	if (m_collisionLayer)
+	{
+		delete m_collisionLayer;
+		m_collisionLayer = nullptr;
+	}
+	if (m_unbreakableLayer)
+	{
+		delete m_unbreakableLayer;
+		m_unbreakableLayer = nullptr;
+	}
+
+	bool allResourcesUnloaded = m_powerUps.empty() && m_balls.empty() && !m_paddle && !m_map && !m_layerZero && !m_collisionLayer && !m_unbreakableLayer;
+	return allResourcesUnloaded;
+}
+
+void World::reset()
+{
+	unload();
+	load();
+	m_isGameOver = false;
+	m_isVictory = false;
+	m_shouldReset = false;
+}
 
 void World::handleCollisionsWithBricks()
 {
@@ -227,8 +300,13 @@ void World::checkBallBoundaries()
 {
 	for (auto it = m_balls.begin(); it != m_balls.end();)
 	{
-		if ((*it)->CheckBottomBoundaryTreaspassing((*it)->getPosition(), m_paddle, m_isGameOver, m_balls.size()))
-		{
+		bool isOutOfBounds = (*it)->CheckBottomBoundaryTreaspassing((*it)->getPosition(), m_paddle, m_isGameOver, m_balls.size());
+
+		if (isOutOfBounds)		{
+			if (m_isGameOver)
+			{
+				m_soundManager.playSound("game_over");
+			}
 			if (m_balls.size() > 1)
 			{
 				delete *it;
@@ -309,31 +387,17 @@ void World::createExtraBalls()
 
 void World::setGameStateGameOver(sf::RenderWindow& window)
 {
-	sf::Font font;
-	font.loadFromFile(TEXT_FONT);
-	sf::Text gameOverText;
-	gameOverText.setFont(font);
-	gameOverText.setString("GAME OVER");
-	gameOverText.setCharacterSize(50);
-	gameOverText.setFillColor(sf::Color::Red);
-	gameOverText.setStyle(sf::Text::Bold);
-	gameOverText.setPosition(SCREEN_WIDTH / 2.f - gameOverText.getGlobalBounds().width / 2.f, SCREEN_HEIGHT / 2.f - gameOverText.getGlobalBounds().height / 2.f);
-	window.draw(gameOverText);
-	m_soundManager.playSound("game_over");
+	m_levelManager.setGameStateGameOver(window);
+
 }
 
 void World::setGameStateVictory(sf::RenderWindow& window)
 {
-	sf::Font font;
-	font.loadFromFile(TEXT_FONT);
-	sf::Text victoryText;
-	victoryText.setFont(font);
-	victoryText.setString("VICTORY");
-	victoryText.setCharacterSize(50);
-	victoryText.setFillColor(sf::Color::Green);
-	victoryText.setStyle(sf::Text::Bold);
-	victoryText.setPosition(SCREEN_WIDTH / 2.f - victoryText.getGlobalBounds().width / 2.f, SCREEN_HEIGHT / 2.f - victoryText.getGlobalBounds().height / 2.f);
-	window.draw(victoryText);
-	m_soundManager.playSound("victory");
+	m_levelManager.setGameStateVictory(window);
+
+}
+void World::setWindow(sf::RenderWindow* window)
+{
+	m_window = window;
 }
 

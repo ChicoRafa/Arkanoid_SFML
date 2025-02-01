@@ -12,14 +12,14 @@ bool Game::init(GameCreateInfo& createInfo)
 	m_window->setFramerateLimit(createInfo.frameRateLimit);
 	m_world = new World();
 	const bool loadOk = m_world->load();
+	m_world->setWindow(m_window);
 
 	return loadOk;
 }
 
 Game::~Game()
 {
-	// To-Do: make sure m_world is unloaded()
-
+	unload();
 	delete m_world;
 	delete m_window;
 }
@@ -51,4 +51,13 @@ void Game::render()
 	m_world->render(*m_window);
 
 	m_window->display();
+}
+
+bool Game::unload()
+{
+	if (m_world)
+	{
+		m_world->unload();
+	}
+	return true;
 }

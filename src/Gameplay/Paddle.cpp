@@ -14,8 +14,9 @@ bool Paddle::init(const PaddleDescriptor& playerDescriptor)
 
     m_collisionBox.setSize(sf::Vector2f(playerDescriptor.tileWidth, playerDescriptor.tileHeight));
     m_collisionBox.setFillColor(sf::Color::Transparent);
+    /*Debugging purposes
     m_collisionBox.setOutlineColor(sf::Color::Red);
-    m_collisionBox.setOutlineThickness(1.0f);
+    m_collisionBox.setOutlineThickness(1.0f);*/
     m_collisionBox.setPosition(playerDescriptor.position);
 
     return PlayerController::init(playerDescriptor);
@@ -61,8 +62,6 @@ void Paddle::setSize(float width, float height)
     m_tileWidth = width;
     m_tileHeight = height;
     m_collisionBox.setSize(sf::Vector2f(width, height));
-    //mirar
-    
     m_sprite.setScale(width / m_sprite.getLocalBounds().width, height / m_sprite.getLocalBounds().height);
 }
 

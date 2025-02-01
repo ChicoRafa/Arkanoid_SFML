@@ -5,7 +5,7 @@
 
 namespace sf
 {
-	class RenderWindow;
+    class RenderWindow;
 }
 
 class World;
@@ -15,27 +15,26 @@ class World;
  */
 class Game
 {
-	public:
+public:
+    struct GameCreateInfo
+    {
+        std::string gameTitle;
+        uint32_t screenWidth;
+        uint32_t screenHeight;
+        uint32_t frameRateLimit;
+    };
 
-		struct GameCreateInfo
-		{
-			std::string gameTitle;
-			uint32_t screenWidth;
-			uint32_t screenHeight;
-			uint32_t frameRateLimit;
-		};
+    ~Game();
 
-		~Game();
+    bool init(GameCreateInfo& createInfo);
 
-		bool init(GameCreateInfo& createInfo);
+    bool isRunning() const;
 
-		bool isRunning() const;
+    void update(uint32_t deltaMilliseconds);
+    void render();
+    bool unload();
 
-		void update(uint32_t deltaMilliseconds);
-		void render();
-
-	private:
-
-		sf::RenderWindow* m_window{ nullptr };
-		World* m_world{ nullptr };
+private:
+    sf::RenderWindow* m_window{nullptr};
+    World* m_world{nullptr};
 };

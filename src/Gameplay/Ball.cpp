@@ -16,9 +16,11 @@ bool Ball::init(const BallDescriptor& ballDescriptor)
         m_shape.setTexture(ballDescriptor.texture);
     }
 
+    /*Debugging purposes
     // Set the outline color and thickness to visualize the collision shape
     m_shape.setOutlineColor(sf::Color::Red);
     m_shape.setOutlineThickness(1.0f);
+    */
     
     return true;
 }
@@ -54,7 +56,7 @@ bool Ball::CheckBottomBoundaryTreaspassing(sf::Vector2f position, PlayerControll
         else
         {
             // Reset ball position if the game is not over
-            resetPosition({(SCREEN_WIDTH - m_shape.getRadius() * 2) / 2.f, 300.f});
+            resetPosition({(SCREEN_WIDTH - m_shape.getRadius() * 2) / 2.f, 350.f});
         }
         return true;
     }
