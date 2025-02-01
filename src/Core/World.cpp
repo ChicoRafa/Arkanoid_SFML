@@ -76,6 +76,7 @@ bool World::load()
 
 void World::update(uint32_t deltaMilliseconds)
 {
+	m_soundManager.playSound("music");
 	if (m_isGameOver || m_isVictory)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))

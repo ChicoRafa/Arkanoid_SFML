@@ -24,7 +24,8 @@ bool SoundManager::loadAllSounds()
         loadSound("increase", "../Data/Sounds/Arkanoid SFX-Increase.wav") &&
         loadSound("life_lost", "../Data/Sounds/Arkanoid SFX-LifeLost.wav") &&
         loadSound("victory", "../Data/Sounds/Arkanoid SFX-Victory.wav") &&
-        loadSound("game_over", "../Data/Sounds/Arkanoid SFX-GameOver.wav");
+        loadSound("game_over", "../Data/Sounds/Arkanoid SFX-GameOver.wav") &&
+            loadSound("music", "../Data/Sounds/Arkanoid SFX-Music.mp3");
 }
 
 void SoundManager::playSound(const std::string& soundToPlay)
